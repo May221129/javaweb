@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+	id="WebApp_ID" version="3.1">
+
+	<context-param>
+		<param-name>initName</param-name>
+		<param-value>ATLLM</param-value>
+	</context-param>
+
+	<!-- 配置listener监听器 -->
+	<listener>
+		<listener-class>com.llm.a08listener.Listener01</listener-class>
+	</listener>
+
+	<listener>
+		<listener-class>com.llm.a08listener.AttributeListener02</listener-class>
+	</listener>
+
+	<!-- 配置Filter过滤器： -->
+	<filter>
+		<filter-name>contentFilter</filter-name>
+		<!-- 指定拦截器处理类： -->
+		<filter-class>com.llm.a07filter.a02.httpservletrequstwrapper.ContentFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>contentFilter</filter-name>
+		<!-- 指定要拦截的url： -->
+		<url-pattern>/a07filter_a02_httpservletrequstwrapper/bbs2.jsp</url-pattern>
+	</filter-mapping>
+
+	<welcome-file-list>
+		<welcome-file></welcome-file>
+	</welcome-file-list>
+
+	<!-- 权限管理的Filter、Servlet配置： -->
+	<servlet>
+		<description></description>
+		<display-name>AuthorityFilter</display-name>
+		<servlet-name>AuthorityFilter</servlet-name>
+		<servlet-class>com.llm.a07filter.a01.authority5.AuthorityFilter</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>AuthorityFilter</servlet-name>
+		<url-pattern>/AuthorityFilter</url-pattern>
+	</servlet-mapping>
+
+
+	<!-- 一组页面都需要登陆才能查看的Filter相关配置： -->
+	<filter>
+		<filter-name>loginFilter</filter-name>
+		<filter-class>com.llm.a07filter.a01.login4.LoginFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>loginFilter</filter-name>
+		<url-pattern>/a07filter_a01_login4/*</url-pattern>
+	</filter-mapping>
+	<!-- 用户信息放入到session中的键的名字： -->
+	<context-param>
+		<param-name>userSessionKey</param-name>
+		<param-value>USERSESSIONKEY</param-value>
+	</context-param>
+	<!-- 若未登陆需重定向的页面： -->
+	<context-param>
+		<param-name>redirectPage</param-name>
+		<param-value>/a07filter_a01_login4/login.jsp</param-value>
+	</context-param>
+	<!-- 不需要拦截（或检查）的URL列表： -->
+	<context-param>
+		<param-name>uncheckedUrls</param-name>
+		<param-value>/a07filter_a01_login4/b.jsp,/a07filter_a01_login4/a.jsp,/a07filter_a01_login4/list.jsp,/a07filter_a01_login4/login.jsp,/a07filter_a01_login4/doLogin.jsp</param-value>
+	</context-param>
+
+
+	<!-- 字符编码的过滤器： -->
+	<filter>
+		<filter-name>encodingFilter</filter-name>
+		<filter-class>com.llm.a07filter.a01.encoding3.EncodingFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>encodingFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	<!-- 编码ending的配置参数设置： -->
+	<!-- 作用：过滤器先来读取这个初始化参数，由这个这个值来指定字符编码，如果字符编码有变，只需要修改这里即可。 -->
+	<context-param>
+		<param-name>encoding</param-name>
+		<param-value>UTF-8</param-value>
+	</context-param>
+
+	<filter>
+		<filter-name>userNameFilter</filter-name>
+		<filter-class>com.llm.a07filter.a01.filter1.UserNameFilter3</filter-class>
+		<init-param>
+			<param-name>username</param-name>
+			<param-value>tom</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>userNameFilter</filter-name>
+		<url-pattern>/a07filter_a01_filter1/hello4.jsp</url-pattern>
+	</filter-mapping>
+
+	<filter>
+		<filter-name>passwordFilter</filter-name>
+		<filter-class>com.llm.a07filter.a01.filter1.PasswordFilter4</filter-class>
+		<init-param>
+			<param-name>password</param-name>
+			<param-value>1234</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>passwordFilter</filter-name>
+		<url-pattern>/a07filter_a01_filter1/hello4.jsp</url-pattern>
+	</filter-mapping>
+
+	<filter>
+		<filter-name>secondFilter</filter-name>
+		<filter-class>com.llm.a07filter.a01.filter1.SecondFilter2</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>secondFilter</filter-name>
+		<url-pattern>/a07filter_a01_filter1/test2.jsp</url-pattern>
+	</filter-mapping>
+
+	<!-- 注册Filter过滤器 -->
+	<filter>
+		<filter-name>helloFilter</filter-name>
+		<filter-class>com.llm.a07filter.a01.filter1.HelloFilter1</filter-class>
+		<init-param>
+			<param-name>name</param-name>
+			<param-value>root</param-value>
+		</init-param>
+	</filter>
+	<!-- 映射Filter -->
+	<filter-mapping>
+		<filter-name>helloFilter</filter-name>
+		<!-- 要拦截的是什么： -->
+		<url-pattern>/a07filter_a01_filter1/test2.jsp</url-pattern>
+		<!-- dispatcher:过滤器工作的时机（可以写多个，默认是request） -->
+		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>FORWARD</dispatcher>
+		<dispatcher>INCLUDE</dispatcher>
+		<dispatcher>ERROR</dispatcher>
+	</filter-mapping>
+
+	<!-- 指定错误页面： -->
+	<error-page>
+		<exception-type>java.lang.ArithmeticException</exception-type>
+		<location>/a07filter_a01_filter1/test2.jsp</location>
+	</error-page>
+
+	<servlet>
+		<description></description>
+		<display-name>CheckCodeServlet</display-name>
+		<servlet-name>CheckCodeServlet</servlet-name>
+		<servlet-class>com.llm.a03cookie.a02.check7.CheckCodeServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>CheckCodeServlet</servlet-name>
+		<url-pattern>/checkCodeServlet</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>validateColorServlet</servlet-name>
+		<servlet-class>com.llm.a03cookie.a02.check7.ValidateColorServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>validateColorServlet</servlet-name>
+		<url-pattern>/validateColorServlet</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<description></description>
+		<display-name>TokenServlet</display-name>
+		<servlet-name>TokenServlet</servlet-name>
+		<servlet-class>com.llm.a03cookie.a02.token6.TokenServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>TokenServlet</servlet-name>
+		<url-pattern>/tokenServlet</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<description></description>
+		<display-name>CustomerServlet</display-name>
+		<servlet-name>CustomerServlet</servlet-name>
+		<servlet-class>com.llm.a02mvc.a02mvcapp.CustomerServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>CustomerServlet</servlet-name>
+		<url-pattern>*.do</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<servlet-name>InitServlet</servlet-name>
+		<servlet-class>com.llm.a02mvc.a02mvcapp.InitServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<error-page>
+		<error-code>404</error-code>
+		<location>/WEB-INF/a01base_a04_hello03.jsp</location>
+	</error-page>
+	<error-page>
+		<exception-type>java.lang.ArithmeticException</exception-type>
+		<location>/WEB-INF/a01base_a04_error02.jsp</location>
+	</error-page>
+	<servlet>
+		<servlet-name>ajsp</servlet-name>
+		<jsp-file>/a01base_a04_jsp_include01/a.jsp</jsp-file>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ajsp</servlet-name>
+		<url-pattern>/ajsp</url-pattern>
+	</servlet-mapping>
+	<context-param>
+		<param-name>user</param-name>
+		<param-value>atllm</param-value>
+	</context-param>
+	<context-param>
+		<param-name>password</param-name>
+		<param-value>123456</param-value>
+	</context-param>
+	<context-param>
+		<param-name>driver</param-name>
+		<param-value>com.mysql.jdbc.Driver</param-value>
+	</context-param>
+	<context-param>
+		<param-name>jdbcUrl</param-name>
+		<param-value>jdbc:mysql:///atllm</param-value>
+	</context-param>
+	<servlet>
+		<servlet-name>loginServlet</servlet-name>
+		<servlet-class>com.llm.a01base.a03thirdwebapp.A04LoginServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>loginServlet</servlet-name>
+		<url-pattern>/loginServlet</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<description></description>
+		<display-name>B05ForwardServlet1</display-name>
+		<servlet-name>B05ForwardServlet1</servlet-name>
+		<servlet-class>com.llm.a01base.a03thirdwebapp.B05ForwardServlet1</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>B05ForwardServlet1</servlet-name>
+		<url-pattern>/forwardServlet</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<description></description>
+		<display-name>B05TestServlet1</display-name>
+		<servlet-name>B05TestServlet1</servlet-name>
+		<servlet-class>com.llm.a01base.a03thirdwebapp.B05TestServlet1</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>B05TestServlet1</servlet-name>
+		<url-pattern>/testServlet</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<description></description>
+		<display-name>B05RedirectServlet2</display-name>
+		<servlet-name>B05RedirectServlet2</servlet-name>
+		<servlet-class>com.llm.a01base.a03thirdwebapp.B05RedirectServlet2</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>B05RedirectServlet2</servlet-name>
+		<url-pattern>/redirectServlet</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<servlet-name>hellojsp</servlet-name>
+		<jsp-file>/a01base_a03_b01jsp8geyinhanduixiang.jsp</jsp-file>
+		<init-param>
+			<param-name>test</param-name>
+			<param-value>testValue</param-value>
+		</init-param>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>hellojsp</servlet-name>
+		<url-pattern>/hellojsp</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<description></description>
+		<display-name>TestAttr</display-name>
+		<servlet-name>TestAttr</servlet-name>
+		<servlet-class>com.llm.a01base.a03thirdwebapp.B04TestAttribute</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>TestAttr</servlet-name>
+		<url-pattern>/testAttr</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<servlet-name>helloServlet</servlet-name>
+		<servlet-class>com.llm.a01base.a02secondwebapp.A02HelloServlet</servlet-class>
+		<init-param>
+			<param-name>user</param-name>
+			<param-value>root</param-value>
+		</init-param>
+		<init-param>
+			<param-name>password</param-name>
+			<param-value>1230</param-value>
+		</init-param>
+		<load-on-startup>-1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>helloServlet</servlet-name>
+		<url-pattern>/hello</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<servlet-name>asloginServlet</servlet-name>
+		<servlet-class>com.llm.a01base.a02secondwebapp</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>asloginServlet</servlet-name>
+		<url-pattern>/asloginServlet</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<description></description>
+		<display-name>TestServlet</display-name>
+		<servlet-name>TestServlet</servlet-name>
+		<servlet-class>com.llm.a08listener.a01.listener.TestServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>TestServlet</servlet-name>
+		<url-pattern>/TestServlet</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>uploadServlet</servlet-name>
+		<servlet-class>com.llm.a09fileupload.a01.fileupload.UploadServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>uploadServlet</servlet-name>
+		<url-pattern>/uploadServlet</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>fileUploadServlet</servlet-name>
+		<servlet-class>com.llm.a09fileupload.a02.fileupload.app.servlet.FileUploadServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>fileUploadServlet</servlet-name>
+		<url-pattern>/fileUploadServlet</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>downloadServlet</servlet-name>
+		<servlet-class>com.llm.a09fileupload.a03.download.DownloadServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>downloadServlet</servlet-name>
+		<url-pattern>/downloadServlet</url-pattern>
+	</servlet-mapping>
+
+</web-app>

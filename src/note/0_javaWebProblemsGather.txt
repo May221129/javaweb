@@ -1,0 +1,152 @@
+学习一个新的知识，要问①what（这是什么）、②how（这怎么用）、③why（为什么要这么写/做）。
+
+9. 范式（一张数据表的表结构所符合的某种设计标准的级别。）
+	https://www.cnblogs.com/GISerYang/archive/2012/05/09/2491996.html
+	9.1 第一范式：列的不可分割性。
+		举例：
+			有个字段为“联系方式”，该字段填入的记录由“电话号码+地址”组成。此时，这个“联系方式”字段，是可以分割为“电话号码”字段+“地址”字段的，所以这张表就不符合第一范式。
+		如果列设为“联系方式”，存在的问题：
+			增：从前端传来2个电话号码和地址，服务器还得对其进行核对、拼接，再和其他内容一起封装成一个实体，插入到数据库中，这个过程就因为数据表的设计不合理，显得复杂而又没有意义。
+			删：和查类似。
+			改：如果要单独修改电话号码，还得把整个“联系方式”拿出来，截取出电话号码，修改好，然后再放回数据表中。如果是“电话号码”、“地址”两个字段，就直接对电话号码进行修改即可。
+			查：1.如果想通过某个电话号码来查找记录，就更麻烦了，需要把所有的“联系方式”都拿出来截取出电话号码，再进行比对。
+				2.如果通过ID想查姓名、电话号码，还得找到这条记录后，拿到“联系方式”，截取出电话号码。
+	9.2 第二范式：在1NF的基础上，消除非主属性对码的部分函数依赖。（完成依赖是可以的，部分依赖说明可能存在数据的冗余，是要消除的。）
+		举例：
+			符合第二范式的：
+				A表：学生表； B表：课程表； C表：选课表（即关系表，由 id、学生id、课程id、分数 组成）
+				选课表的码是 学生id和课程id 共同组成的；分数是由“学生id和课程id”共同决定的，（学生id,课程id）-> 分数，即分数完全依赖于（学生id，课程id）。
+			不符合第二范式的：
+				A表：学生表（id,学号，姓名）； B表：课程表（id，课程名）； C表：选课表（即关系表，由 id、学生id、课程id、分数 组成）
+				选课表的码是 学生id和课程id 共同组成的；（学号，课程）-> 姓名，这里的姓名就是部分依赖于码，完全依赖于学号。
+		总结：会出现不符合第二范式的场景，一般是在关系表中。因为关系表中的码往往是由两个字段或大于两个地段共同组成的，此时除码之外的非主属性如果完全依赖于码中的某一个字段，就会违背第二范式。
+	9.3 第三范式：在1NF和2NF的基础上，消除非主属性对码的传递函数依赖。
+		传递：3 > 2 , 2 > 1 ,得 3 > 1，这是数学里的传递。
+		传递依赖：学生可以找到他的班级，班级可以得到班级地址，所以通过一个学生就能找到他的班级地址。
+		举例：
+			StudyNo   |   Name   |   Sex   |      Email      |      Phone    |   ClassNo  | ClassAddress
+			这里可以通过StudyNo找到ClassNo，可以通过ClassNo找到ClassAddress，所以ClassAddress对StudyNo存在传递性依赖。
+		消除传递性依赖：要变为两个表
+			表一：StudyNo   |   Name   |   Sex   |     Email     |      Phone  |   ClassNo
+			表二：ClassNo  | ClassAddress
+			
+	注：1. 码是唯一标识一行记录的字段。
+		2. 范式并非绝对的。有时应按现在的需求并结合未来可能发生的变化来进行数据表的设计。
+		3. 表与表之间的关系，都是两两之间的。
+	
+	why ==> 为什么有范式：如果没有范式，表结构会很冗长，增、删、改、查都会有存在很多问题，表关系也会复杂，范式就是为了避免这些问题而存在的。
+	how ==> 范式怎么用：数据表设计好之后，再对照范式的要求来检查表的设计是否合理，如果没有遵循范式则做改进。而非按照范式来直接设计数据表。
+	
+8. 重点：分页的实现，带查询条件的分页的实现
+
+7. 不想把程序中的某一规则/参数写死，而是通过读取配置文件来获取这些规则/信息，提问：应该怎么做？
+	答：配置文件一般有两种方式：简单的、复杂的。
+		（1）简单的：在src目录的直接目录下，新建一file类型的文件，文件名为xxx.properties；
+			案例：
+				要求：>> 文件的扩展名必须为规定范围内的扩展名，如：exts=pptx, docx, doc,txt
+					>> 每个文件的大小不能超过 1 M
+					>> 总的文件大小不能超过 5 M.
+				实现：
+					① 创建propertiesexts文件：
+						exts=pptx,docx,doc,txt
+						file.max.size=1048576
+						total.file.max.size=5242880
+					② 创建一个读取这个properties的类，该类为单例模式，详见com.llm.a09fileupload.a01.fileupload.app.utils.FileUploadAppProperties
+					③ 在需要用到这些规则/参数的类中，进行使用，详见com.llm.a09fileupload.a01.fileupload.app.listener.FileUploadAppListener
+						和com.llm.a09fileupload.a02.fileupload.app.servlet.FileUploadServlet类
+				
+		（2）复杂的：在xml中进行参数初始化配置。
+		
+
+6.  ① filterConfig.getInitParameter()获取的是<filter>标签中设置的 初始化值：针对当前filter可获取；
+	② servletConfig.getInitParameter("user")：取的是<servlet>标签中的值：针对当前servlet可获取
+	<servlet>
+    	<servlet-name>helloServlet</servlet-name>
+    	<servlet-class>com.llm.a01base.a02secondwebapp.A02HelloServlet</servlet-class>
+    	<init-param>
+     		<param-name>user</param-name>
+      		<param-value>root</param-value>
+    	</init-param>
+  	</servlet>
+  	③ ServletContext：取得是<context-param>标签中的初始化值，全局共享。
+
+5. 自定义标签：用于输出指定文件的内容.doTag()方法的实现：【含正则表达式知识点：防止程序搞混，把一个符号转换成另一种符号】
+	@Override
+	public void doTag() throws JspException, IOException {
+		PageContext pageContext = (PageContext) getJspContext();
+		InputStream in = pageContext.getServletContext().getResourceAsStream(src);
+		BufferedReader reader  = new BufferedReader(new InputStreamReader(in));
+		String str = null;
+//		 一行一行的读，记得换行.
+		while((str = reader.readLine()) != null){	
+//			如果文件的内容有标签，则需要转换一下，否则HTML读取到这个标签时，会当做一般的标签处理，而不会在页面上打印出来
+//			 即：遇到 < 和 > 需要转换一下
+//			解决方法：使用正则表达式：
+			str = Pattern.compile("<").matcher(str).replaceAll("&lt");
+			str = Pattern.compile(">").matcher(str).replaceAll("&gt");
+			pageContext.getOut().println(str);
+			pageContext.getOut().println("<br>");
+		}
+	}
+	知识补充：
+		BufferedReader 由Reader类扩展而来，提供通用的缓冲方式文本读取，而且提供了很实用的readLine，读取一个文本行，从字符输入流中读取文本，缓冲各个字符，从而提供字符、数组和行的高效读取。
+		一般用法：
+		BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream("ming.txt")));
+		String data = null;
+		while((data = br.readLine())!=null) { System.out.println(data); }
+
+4. 报错问题：/a05tag_a01_customtag1.jsp/testtag2.jsp (line: 18, column: 31) quote symbol expected
+	/a05tag_a01_customtag1.jsp/testtag2.jsp的第18行、31列 少了一个引号。
+	quote symbol expected：引用符号预期
+
+3. get和post请求的区别和应用场景：
+	答：get：放在请求头，是用于查询的请求，可直接在URL后做拼接，但URL的长度有限制，get用于超连接。get请求更快。
+		post：放在请求体里，除了查以外的增删改都可以用post请求，修改资源，表单提交。
+2. JSP
+	2.1 JSP是什么？
+		答：JSP是能写Java代码的HTML，其本质是一个Servlet。
+	2.2 如何使用标签？
+		答：1、在lib中加入jstl.jar和standard.jar；
+			2、在Buid path中关联标签库；
+			3、在jsp的中导入标签库：<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+			4、使用：<c:forEach items="${requestScope.customers }" var="customer">
+						${customer.id },${customer.name },${customer.age }<br>
+					 </c:forEach>
+		
+1. Cookie和Session Cookie:
+	1.1 Cookie是用来跟踪会话的，Session Cookie（通过服务器设置了JSESSIONID）也是用于跟踪会话的吗？两者的区别在哪儿？
+		答：Cookie：因为HTTP是无状态的（每次发出的请求都是独立的），所以利用Cookie来跟踪会话。
+			持久化的Cookie能够让浏览器关闭再重新开启后，还能让浏览器发出的请求带着持久化的Cookie，
+			Session Cookie：系统会创造一个名为JSESSIONID的输出cookie，这称之为session cookie，session cookie是储存
+			于浏览器内存中的，并不是写在硬盘中的，通常看不到JSESSIONID。通过JSESSIONID中保存的SessionId找回服务器中对
+			应的HttpSession。
+	1.2 怎么让Cookie持久化？
+		答：通过Cookie类的setMaxAge()方法来使Cookie持久化。以秒为单位, 
+			若为 0 , 表示立即删除该 Cookie；
+			若为负数, 表示不存储该 Cookie,；
+			若为正数, 表示该 Cookie 的存储时间.
+	1.3 为什么我的Session对象还没过期，但是浏览器关闭重启后，找不到刚刚的Session对象了？
+		答：因为Session对象是基于Cookie实现的。
+			浏览器一次请求过去，如果有创建一个Session对象，保存在了服务器上。如果此时该request没有携带Cookie过来，
+			则服务器会set—Cookie并将Session对象的SessionId保存到该Cookie中随着response回到浏览器。
+			如果这时没有设置Cookie的有效时长将Cookie持久化，此时关闭浏览器后，Cookie就被删除了。重新打开浏览器，
+			新的请求过去，这个请求是不携带刚刚那个保存有SessionId的Cookie的，所以这时候就找不到服务器中保存的Session对象了。
+			>总而言之：
+			想要浏览器重启后还能找到之前的Session对象，实现方式：①Cookie持久化（使Cookie的有效时长和Session的生命周期一致）；
+			②URL重写。默认是使用cookie。
+	1.4 request、response、Session是怎样的存储方式？
+		答：三者都是以Map的形式存储数据的。
+			request和response：保存在内存中，完成“请求-响应”就销毁了；
+			Session：保存在内存中，保存在服务器中。
+			【如果是保存在磁盘上的东西，是要以文件形式保存的。】
+	1.5  为什么开发时都要使用绝对路径，而不能使用相对路径？（一个jsp页面映射到一个servlet时，servlet要写绝对路径）
+			具体情况：<form action="<%=request.getContextPath() %>/processStep1" method="post">
+		答：在由Servlet转发到JSP页面时，此时浏览器地址栏上显示的是Servlet的路径，而若JSP页面的超链接还是相对于该JSP页面的地址，
+			则可能出现路径混乱的问题。
+			/a.jsp
+				-path
+					/b.jsp
+					/c.jsp
+			a.jsp -> /Servlet 转发 -> b.jsp(有一个超链接：和b.jsp在同一路径下的c.jsp) -> 无法得到页面
+		注：	2.1 绝对路径： 相对于当前 WEB 应用的路径. 在当前 WEB 应用的所有的路径前都添加 contextPath 即可. 
+		

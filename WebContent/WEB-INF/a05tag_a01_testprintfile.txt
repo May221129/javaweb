@@ -1,0 +1,100 @@
+2. 自定义标签
+	2.1 怎么自定义标签：HelloWorld（详情见：com.llm.a05tag.a01.customtag.HelloSimpleTag和WebContent/WEB-INF/mytag.tld）
+		①. 创建一个标签处理器类: 实现 SimpleTag 接口. 
+		②. 在 WEB-INF 文件夹下新建一个 .tld(标签库描述文件) 为扩展名的 xml 文件. 并拷入固定的部分: 并对 
+			description, display-name, tlib-version, short-name, uri 做出修改
+		要从c.tld文件中拷入固定的部分：
+			<taglib xmlns="http://java.sun.com/xml/ns/j2ee"
+   				xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    			xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd"
+   				version="2.0">
+ 				<description>JSTL 1.1 core library</description>
+ 	 			<display-name>JSTL core</display-name>
+  				<tlib-version>1.1</tlib-version>
+  				<short-name>c</short-name>
+  				<uri>http://java.sun.com/jsp/jstl/core</uri>
+			</taglib>
+		③. 在 tld 文件中描述自定义的标签:
+			<!-- 描述自定义的 HelloSimpleTag 标签 -->
+  			<tag>
+  				<!-- 标签的名字: 在 JSP 页面上使用标签时的名字 -->
+  				<name>hello</name>
+  				<!-- 标签所在的全类名 -->
+  				<tag-class>com.atllm.javaweb.tag.HelloSimpleTag</tag-class>
+  				<!-- 标签体的类型 -->
+  				<body-content>empty</body-content>
+ 			</tag>
+		④. 在 JSP 页面上使用自定义标签: 
+			> 使用 taglib 指令导入标签库描述文件: <%@taglib uri="http://www.atllm.com/mytag/core" prefix="atllm" %>
+			> 使用自定义的标签: <atllm:hello/> 
+	2.2 setJspContext: 一定会被 JSP 引擎所调用, 先于 doTag, 把代表 JSP 引擎的 pageContext 传给标签处理器类. 详情见：com.llm.a05tag.a01.customtag.HelloSimpleTag
+		private PageContext pageContext;
+		@Override
+		public void setJspContext(JspContext arg0) {
+			System.out.println(arg0 instanceof PageContext);  
+			this.pageContext = (PageContext) arg0;
+		}	
+	2.3 自定义标签的实现顺序：
+		① 通过jsp页面的uri找到对应的tld文件；
+		② 通过tld文件中的<tag-class>标签找到标签的处理器类；
+		③ 指定标签的处理器类，并将最终的执型结果返回给jsp页面做展示；
+	
+3. 带属性的自定义标签:
+	① 先在标签处理器类中定义 setter 方法. 建议把所有的属性类型都设置为 String 类型. 
+		private String value;
+		private String count;
+		public void setValue(String value) {
+			this.value = value;
+		}
+		public void setCount(String count) {
+			this.count = count;
+		}
+	② 在 tld 描述文件中来描述属性:
+		<!-- 描述当前标签的属性 -->
+		<attribute>
+  			<!-- 属性名：需和标签处理器类的setXxx()方法定义的属性相同 -->
+  			<name>value</name>
+  			<!-- 该属性是否为必须： -->
+  			<!-- 设定为true和false的区别：在jsp页面使用该标签时，设定为true的属性，一定会要求你写，设定为false的属性则不会要求你一定要写：<atllm:hello value=""/> -->
+  			<required>true</required>
+  			<!-- rtexprvalue:runtime expression value
+  				当前属性是否可以接受运行时表达式的动态值： -->
+  			<rtexprvalue>true</rtexprvalue>
+  		</attribute>
+	③. 在jsp页面中使用属性, 属性名同 tld 文件中定义的名字. 
+		<atllm:hello value="${param.name }" count="10"/>
+
+4. 通常情况下开发简单标签直接继承 SimpleTagSupport 就可以了. 可以直接调用其对应的 getter 方法得到对应的 API 
+	public class SimpleTagSupport implements SimpleTag{
+    	public void doTag() throws JspException, IOException{}
+    	
+   		private JspTag parentTag;
+   		
+    	public void setParent( JspTag parent ) {
+        	this.parentTag = parent;
+    	}
+    	
+    	public JspTag getParent() {
+        	return this.parentTag;
+    	}
+    	
+    	private JspContext jspContext;
+    	
+    	public void setJspContext( JspContext pc ) {
+        	this.jspContext = pc;
+  	  	}
+  	  	
+   		protected JspContext getJspContext() {
+       		 return this.jspContext;
+    	}
+    
+    	private JspFragment jspBody;
+                
+    	public void setJspBody( JspFragment jspBody ) {
+        	this.jspBody = jspBody;
+    	}
+    
+    	protected JspFragment getJspBody() {
+       		return this.jspBody;
+    	}   
+	}

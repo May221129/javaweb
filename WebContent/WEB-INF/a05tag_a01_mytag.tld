@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!-- taglib是根节点，是一定要有的，是固定的： -->
+<taglib xmlns="http://java.sun.com/xml/ns/j2ee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd"
+    version="2.0">
+    
+  <!-- description:描述TDL文件 -->
+  <description>MyTag 1.0 core library</description>
+  <display-name>MyTag core</display-name>
+  <tlib-version>1.0</tlib-version>
+  <!-- 上面3个没有那么重要，下面2个很重要： -->
+  <!-- 建议在jsp页面上使用的标签的前缀： -->
+  <short-name>atllm</short-name>
+  <!-- 作为tld文件的id，用来唯一标识当前的tld文件，多个tld文件的URI不能重复，
+  	     通过jsp页面的taglib标签的uri属性来引用： -->
+  <uri>http://www.atllm.com/a05tag_a01_mytag/core</uri>
+  
+  <tag>
+  	<name>chooseParentTag</name>
+  	<tag-class>com.llm.a05tag.a01.customtag.ChooseParentTag8</tag-class>
+  	<body-content>scriptless</body-content>
+  </tag>
+  
+  <tag>
+  	<name>whenSonTag</name>
+  	<tag-class>com.llm.a05tag.a01.customtag.WhenSonTag8</tag-class>
+  	<body-content>scriptless</body-content>
+  	<attribute>
+  		<name>test</name>
+  		<required>true</required>
+  		<rtexprvalue>true</rtexprvalue>
+  	</attribute>
+  </tag>
+  
+  <tag>
+  	<name>otherwise</name>
+  	<tag-class>com.llm.a05tag.a01.customtag.OtherwiseSonTag8</tag-class>
+  	<body-content>scriptless</body-content>
+  </tag>
+  
+  <tag>
+  	<name>parentTag</name>
+  	<tag-class>com.llm.a05tag.a01.customtag.ParentTag7_1</tag-class>
+  	<body-content>scriptless</body-content>
+  </tag>
+  
+  <tag>
+  	<name>sonTag</name>
+  	<tag-class>com.llm.a05tag.a01.customtag.SonTag7_2</tag-class>
+  	<body-content>empty</body-content>
+  </tag>
+  
+  <tag>
+  	<name>forEach</name>
+  	<tag-class>com.llm.a05tag.a01.customtag.ForEachTag6</tag-class>
+  	<body-content>scriptless</body-content>
+  	<attribute>
+  		<name>items</name>
+  		<required>true</required>
+  		<rtexprvalue>true</rtexprvalue>
+  	</attribute>
+  	<attribute>
+  		<name>var</name>
+  		<required>true</required>
+  		<rtexprvalue>true</rtexprvalue>
+  	</attribute>
+  </tag>
+  
+  <tag>
+  	<name>testUppercaseNTime</name>
+  	<tag-class>com.llm.a05tag.a01.customtag.PrintUppercaseTag5</tag-class>
+  	<body-content>scriptless</body-content>
+  	<attribute>
+  		<name>time</name>
+  		<required>true</required>
+  		<rtexprvalue>true</rtexprvalue>
+  	</attribute>
+  </tag>
+  
+  <tag>
+  	<name>testJspFragment</name>
+  	<tag-class>com.llm.a05tag.a01.customtag.TestJspFragment4</tag-class>
+  	<body-content>scriptless</body-content>
+  </tag>
+  
+  <tag>
+  	<name>readFile</name>
+  	<tag-class>com.llm.a05tag.a01.customtag.ReadFileTag3</tag-class>
+  	<body-content>empty</body-content>
+  	<attribute>
+  		<name>src</name>
+  		<required>true</required>
+  		<rtexprvalue>true</rtexprvalue>
+  	</attribute>
+  </tag>
+  
+  <tag>
+  	<name>max</name>
+  	<!-- 标签所在全类名： -->
+  	<tag-class>com.llm.a05tag.a01.customtag.MaxTag2</tag-class>
+  	<!-- 标签体的类型： -->
+  	<body-content>empty</body-content>
+  	<!-- 描述当前标签的属性： -->
+  	<attribute>
+  		<!-- 属性名：需和标签处理器类的setXxx()方法定义的属性相同 -->
+  		<name>number1</name>
+  		<!-- 该属性是否为必须： -->
+  		<required>true</required>
+  		<!-- rtexprvalue:runtime expression value
+  			当前属性是否可以接受运行时表达式的动态值： -->
+  		<rtexprvalue>true</rtexprvalue>
+  	</attribute>
+  	<attribute>
+  		<name>number2</name>
+  		<required>true</required>
+  		<rtexprvalue>true</rtexprvalue>
+  	</attribute>
+  </tag>
+  
+  <!-- 描述自定义的HelloSimpleTag标签 ：-->
+  <tag>
+  	<!-- 标签名：在jsp页面上使用标签时的名字——<body><atllm:hello/></body> -->
+  	<name>hello</name>
+  	<!-- 标签所在全类名： -->
+  	<tag-class>com.llm.a05tag.a01.customtag.HelloSimpleTag1</tag-class>
+  	<!-- 标签体的类型： -->
+  	<body-content>empty</body-content>
+  	<!-- 描述当前标签的属性： -->
+  	<attribute>
+  		<!-- 属性名：需和标签处理器类的setXxx()方法定义的属性相同 -->
+  		<name>value</name>
+  		<!-- 该属性是否为必须： -->
+  		<!-- 设定为true和false的区别：在jsp页面使用该标签时，设定为true的属性，一定会要求你写，设定为false的属性则不会要求你一定要写：<atllm:hello value=""/> -->
+  		<required>true</required>
+  		<!-- rtexprvalue:runtime expression value
+  			当前属性是否可以接受运行时表达式的动态值： -->
+  		<rtexprvalue>true</rtexprvalue>
+  	</attribute>
+  	<attribute>
+  		<name>count</name>
+  		<!-- 如果将value属性和count属性都设定为必须的，则再jsp页面使用hello标签时：<atllm:hello count="" value=""/> -->
+  		<required>true</required>
+  		<rtexprvalue>true</rtexprvalue>
+  	</attribute>
+  </tag>
+  
+  <!-- 注意：描述EL自定义函数的function标签，不能写在描述自定义标签tag的前面，否则会报错 -->
+  <!-- 描述EL自定义函数： -->
+  <function>
+  		<!-- 函数名 -->
+  		<name>concat</name>
+  		<!-- 函数所在的类 -->
+  		<function-class>com.llm.a05tag.a01.customtag.MyELFunction9</function-class>
+  		<!-- 函数的签名 -->
+  		<function-signature>java.lang.String contains(java.lang.String, java.lang.String)</function-signature>
+  </function>
+  
+</taglib>
